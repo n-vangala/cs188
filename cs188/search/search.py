@@ -94,19 +94,24 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
     dfs_stack = util.Stack()
-    startState = problem.getStartState()
-    visitedSet = set()
-    correctPath = []
+    startState = problem.getStartState() # ONE LETTER
+    visitedSet = set() # set of LETTERS
+    correctPath = [] # set of ACTIONS
+    # currState is only ONE LETTER
 
-    dfs_stack.push(startState)
+    dfs_stack.push((startState, []))
     while not dfs_stack.isEmpty:
-        currState = dfs_stack.pop()
-        correctPath.append(currState(1))
+        currState, path = dfs_stack.pop()
+        if currState in visitedSet:
+            continue
+        visitedSet.add(currState)
         if problem.isGoalState(currState):
-            return correctPath
+            return path
+        if not problem.getSuccessors(currState):
+            path.pop()
         for successor, action, stepCost in problem.getSuccessors(currState):
             if successor not in visitedSet:
-                dfs_stack.push((successor, action, stepCost))
+                dfs_stack.push(successor, path + [action])
     return []
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
