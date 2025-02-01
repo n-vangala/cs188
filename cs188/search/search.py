@@ -146,8 +146,6 @@ def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
                 ucs_queue.push((successor, path + [action]), problem.getCostOfActions(path + [action]))
     return []
 
-    util.raiseNotDefined()
-
 def nullHeuristic(state, problem=None) -> float:
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -155,10 +153,31 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
-def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
+def aStarSearch(problem: SearchProblem, heuristic=util.manhattanDistance) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def astar_function(item):
+        state, path = item
+        g = problem.getCostOfActions(path)
+        h = heuristic(state, problem)
+        return g + h
+    
+    astar_queue = util.PriorityQueueWithFunction(astar_function)
+    startState = problem.getStartState() # ONE LETTER
+    visitedSet = set() # set of LETTERS
+    # currState is only ONE LETTER
+
+    astar_queue.push((startState, []))
+    while not astar_queue.isEmpty():
+        currState, path = astar_queue.pop()
+        if currState in visitedSet:
+            continue
+        visitedSet.add(currState)
+        if problem.isGoalState(currState):
+            return path
+        for successor, action, stepCost in problem.getSuccessors(currState):
+            if successor not in visitedSet:
+                astar_queue.push((successor, path + [action]))
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
