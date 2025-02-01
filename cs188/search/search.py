@@ -108,14 +108,14 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     return []
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
-    dfs_queue = util.Queue()
+    bfs_queue = util.Queue()
     startState = problem.getStartState() # ONE LETTER
     visitedSet = set() # set of LETTERS
     # currState is only ONE LETTER
 
-    dfs_queue.push((startState, []))
-    while not dfs_queue.isEmpty():
-        currState, path = dfs_queue.pop()
+    bfs_queue.push((startState, []))
+    while not bfs_queue.isEmpty():
+        currState, path = bfs_queue.pop()
         if currState in visitedSet:
             continue
         visitedSet.add(currState)
@@ -123,12 +123,29 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
             return path
         for successor, action, stepCost in problem.getSuccessors(currState):
             if successor not in visitedSet:
-                dfs_queue.push((successor, path + [action]))
+                bfs_queue.push((successor, path + [action]))
     return []
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
+    ucs_queue = util.PriorityQueue()
+    startState = problem.getStartState() # ONE LETTER
+    visitedSet = set() # set of LETTERS
+    # currState is only ONE LETTER
+
+    ucs_queue.push((startState, []), 0)
+    while not ucs_queue.isEmpty():
+        currState, path = ucs_queue.pop()
+        if currState in visitedSet:
+            continue
+        visitedSet.add(currState)
+        if problem.isGoalState(currState):
+            return path
+        for successor, action, stepCost in problem.getSuccessors(currState):
+            if successor not in visitedSet:
+                ucs_queue.push((successor, path + [action]), problem.getCostOfActions(path + [action]))
+    return []
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None) -> float:
