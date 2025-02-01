@@ -100,18 +100,16 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     # currState is only ONE LETTER
 
     dfs_stack.push((startState, []))
-    while not dfs_stack.isEmpty:
+    while not dfs_stack.isEmpty():
         currState, path = dfs_stack.pop()
         if currState in visitedSet:
             continue
         visitedSet.add(currState)
         if problem.isGoalState(currState):
             return path
-        if not problem.getSuccessors(currState):
-            path.pop()
         for successor, action, stepCost in problem.getSuccessors(currState):
             if successor not in visitedSet:
-                dfs_stack.push(successor, path + [action])
+                dfs_stack.push((successor, path + [action]))
     return []
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
