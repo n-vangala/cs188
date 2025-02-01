@@ -89,14 +89,9 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-
     dfs_stack = util.Stack()
     startState = problem.getStartState() # ONE LETTER
     visitedSet = set() # set of LETTERS
-    correctPath = [] # set of ACTIONS
     # currState is only ONE LETTER
 
     dfs_stack.push((startState, []))
