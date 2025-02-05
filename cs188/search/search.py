@@ -153,29 +153,27 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
-def aStarSearch(problem: SearchProblem, heuristic=util.manhattanDistance) -> List[Directions]:
+def aStarSearch(problem: SearchProblem, heuristic= nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
-    def astar_function(item):
-        state, path = item
-        g = problem.getCostOfActions(path)
-        h = heuristic(state, problem)
-        return g + h
+    def priority(tuple):
+        state, path = tuple
+        pathCost = problem.getCostOfActions(path)
+        heuristicCost = heuristic(state, problem)
+        return pathCost + heuristicCost
     
-    astar_queue = util.PriorityQueueWithFunction(astar_function)
     startState = problem.getStartState() # ONE LETTER
-    visitedSet = set() # set of LETTERS
+    astar_queue = util.PriorityQueueWithFunction(priority)
+    visitedDictionary = dict() # set of LETTERS with min_cost so far to get to that letter
     # currState is only ONE LETTER
 
     astar_queue.push((startState, []))
     while not astar_queue.isEmpty():
         currState, path = astar_queue.pop()
-        if currState in visitedSet:
-            continue
-        visitedSet.add(currState)
-        if problem.isGoalState(currState):
-            return path
-        for successor, action, stepCost in problem.getSuccessors(currState):
-            if successor not in visitedSet:
+        if currState not in visitedDictionary or problem.getCostOfActions(path) < visitedDictionary.get(currState):
+            visitedDictionary[currState] = problem.getCostOfActions(path)
+            if problem.isGoalState(currState):
+                return path
+            for successor, action, stepCost in problem.getSuccessors(currState):
                 astar_queue.push((successor, path + [action]))
     return []
 
