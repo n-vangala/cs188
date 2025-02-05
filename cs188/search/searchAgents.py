@@ -283,6 +283,7 @@ class CornersProblem(search.SearchProblem):
         """
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
+        self.visited = []
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         for corner in self.corners:
@@ -295,16 +296,14 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        return self.startingPosition
+        return (self.startingPosition, self.visited)
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
         for corner in self.corners:
-            if not self._visited[corner] == True:
+            if not corner in state[1]:
                 return False
         return True
 
@@ -323,21 +322,18 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = state
+            x,y = state[0]
+            self.visited.append((x, y))
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
 
             if not hitsWall:
-               nextState = (nextx, nexty)
+               nextState = ((nextx, nexty), self.visited)
                cost = 1
                successors.append( ( nextState, action, cost) )
             
         self._expanded += 1 # DO NOT CHANGE
-        if state not in self._visited:
-            self._visited[state] = True
-            self._visitedlist.append(state)
-        return successors
     
     def getCostOfActions(self, actions):
         """
@@ -369,9 +365,12 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    state = (problem.startingPosition, corners)
 
-    "*** YOUR CODE HERE ***"
-    return 1 # Default to trivial solution
+    for corner in corners:
+        manhattanHeuristic(state[0], problem)
+
+    return 0 # Default to trivial solution
 
 
 
