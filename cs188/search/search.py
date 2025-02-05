@@ -146,8 +146,6 @@ def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
                 ucs_queue.push((successor, path + [action]), problem.getCostOfActions(path + [action]))
     return []
 
-    util.raiseNotDefined()
-
 def nullHeuristic(state, problem=None) -> float:
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -155,7 +153,6 @@ def nullHeuristic(state, problem=None) -> float:
     """
     return 0
 
-#from searchAgents import manhattanHeuristic
 def aStarSearch(problem: SearchProblem, heuristic= nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     def priority(tuple):
