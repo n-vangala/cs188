@@ -326,11 +326,11 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
 
             if not hitsWall:
-                nextPos = (nextx, nexty)
+                nextPosition = (nextx, nexty)
                 # Only add to visited if it's a corner we haven't seen
-                if nextPos in self.corners and nextPos not in visited:
-                    visited.append(nextPos)
-                nextState = (nextPos, tuple(visited))
+                if nextPosition in self.corners and nextPosition not in visited:
+                    visited.append(nextPosition)
+                nextState = (nextPosition, tuple(visited))
                 cost = 1
                 successors.append((nextState, action, cost))
             
@@ -367,12 +367,17 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    state = (problem.startingPosition, corners)
+    position, visited = state
+    unvisited = [corner for corner in problem.corners if corner not in visited]
 
-    for corner in corners:
-        manhattanHeuristic(state[0], problem)
-
-    return 0 # Default to trivial solution
+    if not unvisited: 
+        return 0
+    
+    #manhattan distance to closest unvisited corner
+    min_dist = min(manhattanDistance(position, corner) for corner in unvisited)
+    mst_cost = mst(unvisited)
+    
+    return min_dist + mst_cost
 
 
 
@@ -463,8 +468,39 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    
+    foodList = foodGrid.asList()
+    if not foodList:
+        return 0
+    min_dist = min(manhattanDistance(position, food) for food in foodList)
+    mst_cost = mst(foodList)
+    return min_dist + mst_cost
 
+#Mrigank implemented
+def manhattanDistance(xy1, xy2):
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
+#Mrigank implemented
+import heapq
+def mst(coordinates):
+    num_coordinates = len(coordinates)
+    if num_coordinates <= 1:
+        return 0
+    
+    mst_weight = 0
+    visited = {coordinates[0]}
+    edges = [(manhattanDistance(coordinates[0], c), coordinates[0], c) for c in coordinates[1:]]
+    heapq.heapify(edges)
+
+    while edges and len(visited) < num_coordinates:
+        weight, u, v = heapq.heappop(edges)
+        if v not in visited:
+            mst_weight += weight
+            visited.add(v)
+            for neighbor in coordinates:
+                if neighbor not in visited:
+                    heapq.heappush(edges, (manhattanDistance(v, neighbor), v, neighbor))
+    return mst_weight
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -495,7 +531,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.breadthFirstSearch(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -531,7 +567,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
+
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
     """
