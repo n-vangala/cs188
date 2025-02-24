@@ -181,7 +181,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
                     if value < minVal:
                         minVal = value
-                
                 return minVal
             
         bestVal = float('-inf')
