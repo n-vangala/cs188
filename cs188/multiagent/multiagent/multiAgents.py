@@ -176,17 +176,66 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        depth = self.depth
+        legalActions = gameState.getLegalActions(0)
+        bestScore = float('-inf')
+        bestAction = None
+
+        for action in legalActions:
+            successor = gameState.generateSuccessor(0, action)
+            score = self.expectimax(1, depth, successor)
+            if score > bestScore:
+                bestScore = score
+                bestAction = action
+        return bestAction
+    
+    def expectimax(self, agentIndex, depth, gameState: GameState):
+        if gameState.isWin() or gameState.isLose() or depth == 0:
+            return self.evaluationFunction(gameState)
+
+        numAgents = gameState.getNumAgents()
+        
+        if agentIndex == 0:
+            bestScore = 0
+            legalActions = gameState.getLegalActions(0)
+            for action in legalActions:
+                successor = gameState.generateSuccessor(agentIndex, action)
+                score = self.expectimax(1, depth, successor)
+                bestScore = max(bestScore, score)
+            return bestScore
+        else:
+            legalActions = gameState.getLegalActions(agentIndex)
+            totalScore = 0
+            probability = 1.0 / len(legalActions)
+            
+            for action in legalActions:
+                successor = gameState.generateSuccessor(agentIndex, action)
+                if agentIndex == numAgents - 1:
+                    score = self.expectimax(0, depth - 1, successor)
+                else:
+                    score = self.expectimax(agentIndex + 1, depth, successor)
+                totalScore += score * probability
+            return totalScore
 
 def betterEvaluationFunction(currentGameState: GameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
-    DESCRIPTION: <write something here so we know what you did>
+    DESCRIPTION: Evaluated the game state based on how close the nearest food was to Pac-Man. 
+                 If Pac-Man was closer to food, it received more points, thus allowing it to
+                 clear the board of pellets and gain more points.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    score = currentGameState.getScore()
+    foodList = currentGameState.getFood().asList()
+    newPos = currentGameState.getPacmanPosition()
 
+    if foodList:
+            minFoodDist = min(manhattanDistance(newPos, food) for food in foodList)
+            score += 10/minFoodDist
+            
+    return score
+    
 # Abbreviation
 better = betterEvaluationFunction
