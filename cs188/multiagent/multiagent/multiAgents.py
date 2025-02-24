@@ -162,10 +162,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
                     if value > maxVal:
                         maxVal = value
-                        #bestAction = action
-                
-                # if depth == 0:
-                #     return bestAction
                 return maxVal
             else:
                 minVal = float('inf')
@@ -188,13 +184,11 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         for action in gameState.getLegalActions(0):
             successor = gameState.generateSuccessor(0, action)
-            value = minimax(gameState, 0, 0)
+            value = minimax(successor, 0, 1)
             if value > bestVal:
                 bestVal = value
                 bestAction = action
         return bestAction
-            
-        #return minimax(gameState, 0, 0)
         
 
 
