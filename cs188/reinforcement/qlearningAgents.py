@@ -64,7 +64,10 @@ class QLearningAgent(ReinforcementAgent):
         """
         if not self.getLegalActions(state):
             return 0
-        return max(self.getQValue(state, action) for action in self.getLegalActions(state))
+        qValue = []
+        for action in self.getLegalActions(state):
+            qValue.append(self.getQValue(state, action))
+        return max(qValue)
 
     def computeActionFromQValues(self, state):
         """
@@ -95,7 +98,6 @@ class QLearningAgent(ReinforcementAgent):
           HINT: You might want to use util.flipCoin(prob)
           HINT: To pick randomly from a list, use random.choice(list)
         """
-        # Pick Action
         legalActions = self.getLegalActions(state)
         action = None
         if not legalActions:
