@@ -102,7 +102,28 @@ def joinFactors(factors: List[Factor]):
 
 
     "*** YOUR CODE HERE ***"
-    raiseNotDefined()
+    join_unconditioned = set()
+    join_conditioned = set()
+    for factor in factors:
+        join_unconditioned.update(factor.unconditionedVariables())
+        join_conditioned.update(factor.conditionedVariables())
+        join_conditioned -= join_unconditioned
+    variableDomainsDict = list(factors)[0].variableDomainsDict()
+
+    result_factor = Factor(join_unconditioned, join_conditioned, variableDomainsDict)
+    print(join_conditioned)
+    print(join_unconditioned)
+    print("result factor:", result_factor)
+
+    for assignment in result_factor.getAllPossibleAssignmentDicts():
+        print (assignment)
+        product = 1
+        for factor in factors:
+            print(factor.getProbability(assignment))
+            product *= factor.getProbability(assignment)
+        result_factor.setProbability(assignment, product)
+
+    return result_factor
     "*** END YOUR CODE HERE ***"
 
 ########### ########### ###########
@@ -153,7 +174,20 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        variableDomainsDict = factor.variableDomainsDict()
+        unconditioned = set(factor.unconditionedVariables())
+        conditioned = set(factor.conditionedVariables())
+        elimFactor = Factor(unconditioned, conditioned, variableDomainsDict)
+
+        for assignment in elimFactor.getAllPossibleAssignmentDicts():
+            sum = 0
+            for val in list(variableDomainsDict[eliminationVariable]):
+                extended_assignment = assignment.copy()
+                extended_assignment[eliminationVariable] = val
+                sum += factor.getProbability(extended_assignment)
+            elimFactor.setProbability(assignment, sum)
+
+        return elimFactor
         "*** END YOUR CODE HERE ***"
 
     return eliminate
