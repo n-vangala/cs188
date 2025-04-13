@@ -175,7 +175,7 @@ def eliminateWithCallTracking(callTrackingList=None):
 
         "*** YOUR CODE HERE ***"
         variableDomainsDict = factor.variableDomainsDict()
-        unconditioned = set(factor.unconditionedVariables())
+        unconditioned = set(factor.unconditionedVariables()) - {eliminationVariable}
         conditioned = set(factor.conditionedVariables())
         elimFactor = Factor(unconditioned, conditioned, variableDomainsDict)
 
@@ -186,7 +186,6 @@ def eliminateWithCallTracking(callTrackingList=None):
                 extended_assignment[eliminationVariable] = val
                 sum += factor.getProbability(extended_assignment)
             elimFactor.setProbability(assignment, sum)
-
         return elimFactor
         "*** END YOUR CODE HERE ***"
 
