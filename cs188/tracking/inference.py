@@ -69,7 +69,7 @@ def constructBayesNet(gameState: hunters.GameState):
     variableDomainsDict[GHOST1] = allPos
     variableDomainsDict[OBS0] = possibleObservations
     variableDomainsDict[OBS1] = possibleObservations
-    "*** END CODE HERE ***"
+    "*** END YOUR CODE HERE ***"
 
     net = bn.constructEmptyBayesNet(variables, edges, variableDomainsDict)
     return net
@@ -189,7 +189,15 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             eliminationOrder = sorted(list(eliminationVariables))
 
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        currFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        for var in eliminationOrder:
+            currFactorsList, joinedFactor = joinFactorsByVariable(currFactorsList, var)
+            if len(joinedFactor.unconditionedVariables()) > 1:
+                eliminatedFactor = eliminate(joinedFactor, var)
+                currFactorsList.append(eliminatedFactor)
+        inference = joinFactors(currFactorsList)
+        normalizedInference = normalize(inference)
+        return normalizedInference
         "*** END YOUR CODE HERE ***"
 
 
@@ -430,7 +438,10 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        if ghostPosition == jailPosition:
+            return;
+        trueDistance = manhattanDistance(pacmanPosition, ghostPosition)
+        busters.getObservationProbability(noisyDistance, trueDistance)
         "*** END YOUR CODE HERE ***"
 
     def setGhostPosition(self, gameState, ghostPosition, index):
