@@ -190,6 +190,7 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
 
         "*** YOUR CODE HERE ***"
         currFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
+        print("CURR FACTOR LIST:", currFactorsList)
         for var in eliminationOrder:
             currFactorsList, joinedFactor = joinFactorsByVariable(currFactorsList, var)
             if len(joinedFactor.unconditionedVariables()) > 1:
@@ -338,7 +339,11 @@ class DiscreteDistribution(dict):
         {}
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        total = sum(self.values())
+        if (total == 0):
+            return
+        for key in self.keys():
+            self[key] = self[key] / total        
         "*** END YOUR CODE HERE ***"
 
     def sample(self):
@@ -363,7 +368,13 @@ class DiscreteDistribution(dict):
         0.0
         """
         "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        total = self.total()
+        random_value = random.random() * total
+        sum = 0
+        for key, val in self.items():
+            sum += val
+            if random_value <= sum:
+                return key
         "*** END YOUR CODE HERE ***"
 
 
@@ -438,10 +449,13 @@ class InferenceModule:
         Return the probability P(noisyDistance | pacmanPosition, ghostPosition).
         """
         "*** YOUR CODE HERE ***"
-        if ghostPosition == jailPosition:
-            return;
+        if ghostPosition == jailPosition and noisyDistance == None:
+            return 1.0
+        elif noisyDistance is None:
+            return 0.0
+
         trueDistance = manhattanDistance(pacmanPosition, ghostPosition)
-        busters.getObservationProbability(noisyDistance, trueDistance)
+        return busters.getObservationProbability(noisyDistance, trueDistance)
         "*** END YOUR CODE HERE ***"
 
     def setGhostPosition(self, gameState, ghostPosition, index):
