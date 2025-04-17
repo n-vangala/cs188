@@ -680,7 +680,6 @@ class ParticleFilter(InferenceModule):
             self.particles = []
             for i in range(self.numParticles):
                 self.particles.append(weights.sample())
-
         "*** END YOUR CODE HERE ***"
     
     ########### ########### ###########
