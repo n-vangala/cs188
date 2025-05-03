@@ -7,7 +7,7 @@ Functions you should use.
 Please avoid importing any other functions or modules.
 Your code will not pass if the gradescope autograder detects any changed imports
 """
-# import torch
+import torch
 from torch.nn import Parameter, Linear
 from torch import tensor, tensordot, ones, matmul, zeros 
 from torch.nn.functional import relu, softmax
@@ -40,9 +40,9 @@ class PerceptronModel(Module):
         Hint: You can use ones(dim) to create a tensor of dimension dim.
         """
         super(PerceptronModel, self).__init__()
-
         "*** YOUR CODE HERE ***"
-
+        weight_vector = torch.ones(1, dimensions)
+        self.w = torch.nn.Parameter(weight_vector)
 
     def get_weights(self):
         """
@@ -61,8 +61,7 @@ class PerceptronModel(Module):
         The pytorch function `tensordot` may be helpful here.
         """
         "*** YOUR CODE HERE ***"
-
-        
+        return torch.tensordot(x, self.w, 1)
 
     def get_prediction(self, x):
         """
@@ -71,10 +70,9 @@ class PerceptronModel(Module):
         Returns: 1 or -1
         """
         score = self(x)
-
         "*** YOUR CODE HERE ***"
-
-
+        pred = torch.sign(score)
+        return 1 if pred.item() >= 0 else -1
 
 class RegressionModel(Module):
     """
