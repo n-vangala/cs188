@@ -31,27 +31,18 @@ def train_perceptron(model, dataset):
     with no_grad():
         dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
         "*** YOUR CODE HERE ***"
-<<<<<<< HEAD
-        while True:
-            flag = False
+        training_complete = False
+
+        while not training_complete:
+            training_complete = True
+
             for batch in dataloader:
-                x = batch['x'].squeeze(0)
-                y = batch['label'].item()
+                x, label = batch['x'], batch['label']
+                prediction = model.get_prediction(x)
 
-                score = model(x)
-                pred =  1 if score.item() >= 0 else -1
-
-                if y == pred:
-                    continue
-                else:
-                    model.w += y * x
-                    flag = True
-            if not flag:
-                break;
-
-=======
->>>>>>> d464756282aa6a646ebfc327e041d09fd13651f1
-
+                if prediction != label.item():
+                    model.w += label * x
+                    training_complete = False
 
 def train_regression(model, dataset):
     """
@@ -69,6 +60,25 @@ def train_regression(model, dataset):
         
     """
     "*** YOUR CODE HERE ***"
+    batch_size = 64
+    learning_rate = 0.001
+    max_epochs = 500
+    dataloader = DataLoader(dataset, batch_size=batch_size)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+    for epoch in range(max_epochs):
+        total_loss = 0
+        for batch in dataloader:
+            x, y = batch['x'], batch['label']
+            y_pred = model(x)
+            loss = regression_loss(y_pred, y)
+            total_loss += loss.item()
+
+            # Backpropagation
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
 
 
 def train_digitclassifier(model, dataset):
@@ -77,6 +87,25 @@ def train_digitclassifier(model, dataset):
     """
     model.train()
     """ YOUR CODE HERE """
+    batch_size = 64
+    learning_rate = 0.001
+    max_epochs = 5
+    dataloader = DataLoader(dataset, batch_size=batch_size)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+    for epoch in range(max_epochs):
+        total_loss = 0
+        for batch in dataloader:
+            x, y = batch['x'], batch['label']
+            y_pred = model(x)
+            loss = digitclassifier_loss(y_pred, y)
+            total_loss += loss.item()
+
+            # Backpropagation
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
 
 
 def train_languageid(model, dataset):

@@ -7,7 +7,7 @@ Functions you should use.
 Please avoid importing any other functions or modules.
 Your code will not pass if the gradescope autograder detects any changed imports
 """
-import torch
+# import torch
 from torch.nn import Parameter, Linear
 from torch import tensor, tensordot, ones, matmul, zeros 
 from torch.nn.functional import relu, softmax
@@ -40,9 +40,9 @@ class PerceptronModel(Module):
         Hint: You can use ones(dim) to create a tensor of dimension dim.
         """
         super(PerceptronModel, self).__init__()
+
         "*** YOUR CODE HERE ***"
-        weight_vector = torch.ones(1, dimensions)
-        self.w = torch.nn.Parameter(weight_vector)
+        self.w = Parameter(ones(1, dimensions))
 
     def get_weights(self):
         """
@@ -61,7 +61,8 @@ class PerceptronModel(Module):
         The pytorch function `tensordot` may be helpful here.
         """
         "*** YOUR CODE HERE ***"
-        return torch.tensordot(x, self.w, 1)
+        return tensordot(x, self.w.T, dims=1)
+        
 
     def get_prediction(self, x):
         """
@@ -70,9 +71,14 @@ class PerceptronModel(Module):
         Returns: 1 or -1
         """
         score = self(x)
+
         "*** YOUR CODE HERE ***"
-        pred = torch.sign(score)
-        return 1 if pred.item() >= 0 else -1
+        if score >= 0:
+            return 1
+        else:
+            return -1
+
+
 
 class RegressionModel(Module):
     """
@@ -85,7 +91,10 @@ class RegressionModel(Module):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
         super().__init__()
-   
+        self.hidden1 = Linear(1, 128)
+        self.hidden2 = Linear(128, 128)
+        self.output = Linear(128, 1)
+
 
     def forward(self, x):
         """
@@ -97,6 +106,12 @@ class RegressionModel(Module):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
+        x = self.hidden1(x)
+        x = relu(x)
+        x = self.hidden2(x)
+        x = relu(x)
+        x = self.output(x)
+        return x
 
 
 class DigitClassificationModel(Module):
@@ -120,6 +135,9 @@ class DigitClassificationModel(Module):
         input_size = 28 * 28
         output_size = 10
         "*** YOUR CODE HERE ***"
+        self.hidden1 = Linear(input_size, 128)
+        self.hidden2 = Linear(128, 128)
+        self.output = Linear(128, output_size)
 
 
     def forward(self, x):
@@ -137,6 +155,12 @@ class DigitClassificationModel(Module):
                 (also called logits)
         """
         """ YOUR CODE HERE """
+        x = self.hidden1(x)
+        x = relu(x)
+        x = self.hidden2(x)
+        x = relu(x)
+        x = self.output(x)
+        return x
 
 
 
@@ -291,4 +315,3 @@ class Attention(Module):
         B, T, C = input.size()
 
         """YOUR CODE HERE"""
-
