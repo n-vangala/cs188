@@ -125,7 +125,7 @@ def train_languageid(model, dataset):
     model.train()
     "*** YOUR CODE HERE ***"
     batch_size = 32
-    learning_rate = 0.0001
+    learning_rate = 0.0005
     max_epochs = 20
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)

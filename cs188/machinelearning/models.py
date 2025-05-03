@@ -184,9 +184,9 @@ class LanguageIDModel(Module):
         "*** YOUR CODE HERE ***"
         self.hidden = 128
         # Initialize your model parameters here
-        self.input1 = Linear(self.num_chars, self.hidden)
-        self.input2 = Parameter(zeros(1,self.hidden))
+        self.gru = torch.nn.GRU(input_size=self.num_chars, hidden_size=128, num_layers=2, batch_first=False)
         self.output = Linear(self.hidden, len(self.languages))
+
 
     def forward(self, xs):
         """
@@ -220,14 +220,9 @@ class LanguageIDModel(Module):
         "*** YOUR CODE HERE ***"
         l = len(xs)
         batch_size = xs[0].shape[0]
-        h = torch.zeros(batch_size, self.hidden)
-        for x_t in xs:
-            batchTimesHidden = self.input1(x_t)           
-            hiddenRecurring = h * self.input2
-            h  = torch.tanh(batchTimesHidden + hiddenRecurring)
-        return self.output(h) 
-
-
+        out, h_n = self.gru(xs)
+        final_hidden = h_n[-1]
+        return self.output(final_hidden)
 
 
 
