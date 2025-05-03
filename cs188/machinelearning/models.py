@@ -7,6 +7,7 @@ Functions you should use.
 Please avoid importing any other functions or modules.
 Your code will not pass if the gradescope autograder detects any changed imports
 """
+
 import torch
 from torch.nn import Parameter, Linear
 from torch import tensor, tensordot, ones, matmul, zeros 
@@ -246,7 +247,18 @@ def Convolve(input: tensor, weight: tensor):
     weight_dimensions = weight.shape
     Output_Tensor = tensor(())
     "*** YOUR CODE HERE ***"
+    input_h, input_w = input_tensor_dimensions
+    weight_h,  weight_w = weight_dimensions
 
+    output_h = input_h - weight_h + 1
+    output_w = input_w - weight_w + 1
+
+    Output_Tensor = zeros((output_h, output_w))
+
+    for i in range(output_h):
+        for j in range(output_w):
+            window = input[i:i+weight_h, j:j+weight_w]
+            Output_Tensor[i, j] = tensordot(window, weight, dims=2)
     "*** End Code ***"
     return Output_Tensor
 
@@ -270,6 +282,11 @@ class DigitConvolutionalModel(Module):
 
         self.convolution_weights = Parameter(ones((3, 3)))
         """ YOUR CODE HERE """
+        conv_output_size = (28 - 3 + 1) * (28 - 3 + 1)
+
+        self.hidden1 = Linear(conv_output_size, 128)
+        self.hidden2 = Linear(128, 128)
+        self.output  = Linear(128, output_size)
 
 
     def forward(self, x):
@@ -283,6 +300,12 @@ class DigitConvolutionalModel(Module):
         )
         x = x.flatten(start_dim=1)
         """ YOUR CODE HERE """
+        x = self.hidden1(x)
+        x = relu(x)
+        x = self.hidden2(x)
+        x = relu(x)
+        x = self.output(x)
+        return x
 
 
 class Attention(Module):
