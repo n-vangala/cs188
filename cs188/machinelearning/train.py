@@ -89,7 +89,7 @@ def train_digitclassifier(model, dataset):
     """ YOUR CODE HERE """
     batch_size = 64
     learning_rate = 0.001
-    max_epochs = 5
+    max_epochs = 10
     dataloader = DataLoader(dataset, batch_size=batch_size)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
