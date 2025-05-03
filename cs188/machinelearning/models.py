@@ -7,7 +7,7 @@ Functions you should use.
 Please avoid importing any other functions or modules.
 Your code will not pass if the gradescope autograder detects any changed imports
 """
-# import torch
+import torch
 from torch.nn import Parameter, Linear
 from torch import tensor, tensordot, ones, matmul, zeros 
 from torch.nn.functional import relu, softmax
@@ -182,9 +182,11 @@ class LanguageIDModel(Module):
         self.languages = ["English", "Spanish", "Finnish", "Dutch", "Polish"]
         super(LanguageIDModel, self).__init__()
         "*** YOUR CODE HERE ***"
+        self.hidden = 128
         # Initialize your model parameters here
-
-
+        self.input1 = Linear(self.num_chars, self.hidden)
+        self.input2 = Parameter(zeros(1,self.hidden))
+        self.output = Linear(self.hidden, len(self.languages))
 
     def forward(self, xs):
         """
@@ -216,6 +218,16 @@ class LanguageIDModel(Module):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        l = len(xs)
+        batch_size = xs[0].shape[0]
+        h = torch.zeros(batch_size, self.hidden)
+        for x_t in xs:
+            batchTimesHidden = self.input1(x_t)           
+            hiddenRecurring = h * self.input2
+            h  = torch.tanh(batchTimesHidden + hiddenRecurring)
+        return self.output(h) 
+
+
 
 
 

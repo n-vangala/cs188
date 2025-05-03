@@ -124,8 +124,25 @@ def train_languageid(model, dataset):
     """
     model.train()
     "*** YOUR CODE HERE ***"
+    batch_size = 32
+    learning_rate = 0.0001
+    max_epochs = 20
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
+    for epoch in range(max_epochs):
+        total_loss = 0
+        for batch in dataloader:
+            x, y = batch['x'], batch['label']
+            x = movedim(x, 0, 1)
+            y_pred = model(x)
+            loss = languageid_loss(y_pred, y)
+            total_loss += loss.item()
 
+            # Backpropagation
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
 def Train_DigitConvolution(model, dataset):
     """
