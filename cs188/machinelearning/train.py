@@ -31,6 +31,7 @@ def train_perceptron(model, dataset):
     with no_grad():
         dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
         "*** YOUR CODE HERE ***"
+<<<<<<< HEAD
         while True:
             flag = False
             for batch in dataloader:
@@ -48,6 +49,8 @@ def train_perceptron(model, dataset):
             if not flag:
                 break;
 
+=======
+>>>>>>> d464756282aa6a646ebfc327e041d09fd13651f1
 
 
 def train_regression(model, dataset):
